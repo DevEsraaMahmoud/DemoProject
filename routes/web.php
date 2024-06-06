@@ -1,7 +1,9 @@
 <?php
 
-use App\Livewire\CreatePost;
-use App\Livewire\ListPosts;
+use App\Livewire\Posts\CreatePost;
+use App\Livewire\Posts\ListPosts;
+use App\Livewire\Categories\ListCategories;
+use App\Livewire\Categories\CreateCategory;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,6 +23,9 @@ foreach (config('tenancy.central_domains') as $domain) {
         });
 
         Route::get('posts', ListPosts::class);
-        Route::get('posts/create', CreatePost::class);
+        Route::get('posts/create', CreatePost::class)->name('create.posts');
+
+        Route::get('categories', ListCategories::class);
+        Route::get('categories/create', CreateCategory::class)->name('create.categories');
     });
 }

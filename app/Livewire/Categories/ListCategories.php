@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Categories;
 
-use App\Models\Post;
+use App\Models\Category;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\CreateAction;
@@ -17,30 +17,34 @@ use Filament\Tables\Table;
 use Livewire\Component;
 use Filament\Tables;
 
-class ListPosts extends Component implements HasTable, HasForms
+class ListCategories extends Component implements HasTable, HasForms
 {
     use InteractsWithTable, InteractsWithForms;
 
     public function render()
     {
-        return view('livewire.list-posts');
+        return view('livewire.categories.list-categories');
     }
 
     public function table(Table $table): Table
     {
         return $table
-            ->query(Post::query())
+            ->query(Category::query())
             ->columns([
-                TextColumn::make('title')
+                TextColumn::make('name')
                     ->weight('bold')
                     ->sortable(),
-                TextColumn::make('description')
+                TextColumn::make('slug')
             ])
             ->headerActions([
                 // CreateAction::make()
             ])
             ->actions([
-                EditAction::make(),
+                EditAction::make()
+                ->form([
+                TextInput::make('name'),
+                TextInput::make('slug')
+                ]),
                 DeleteAction::make(),
             ]);
     }
