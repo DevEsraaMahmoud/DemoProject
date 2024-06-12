@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('posts', function (Blueprint $table) {
-            $table->boolean('is_published')->default(true);
+        Schema::create('todos', function (Blueprint $table) {
+            $table->id();
+            $table->string('title');
+            $table->boolean('status')->default(true);
+            $table->timestamps();
         });
     }
 
@@ -21,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('posts', function (Blueprint $table) {
-            $table->dropColumn('is_published');
-        });
+        Schema::dropIfExists('todos');
     }
 };

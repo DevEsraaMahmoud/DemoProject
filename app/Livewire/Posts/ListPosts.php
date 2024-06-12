@@ -3,49 +3,50 @@
 namespace App\Livewire\Posts;
 
 use App\Models\Post;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Concerns\InteractsWithTable;
-use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Table;
 use Livewire\Component;
-use Filament\Tables;
+use Livewire\Attributes\Url;
+use Livewire\WithPagination;
+use Livewire\Attributes\Lazy;
+use Livewire\Attributes\Title;
+use Livewire\Attributes\Computed;
 
-class ListPosts extends Component implements HasTable, HasForms
+#[Lazy]
+// #[Title('List Posts')]
+class ListPosts extends Component
 {
-    use InteractsWithTable, InteractsWithForms;
+    use WithPagination;
 
-    public function render()
-    {
-        return view('livewire.posts.list-posts');
+    public $title = 'List Posts';
+
+    #[Url(keep: true)]
+    public ?string $search = '';
+
+    // public function search()
+    // {
+    //     $this->resetPage();
+    // }
+
+    public function createPost(){
+        return redirect()->route('posts.create');
     }
 
-    public function table(Table $table): Table
+    #[Computed(persist: true, seconds: 7200)]
+    public function posts() {
+        return Post::with('category')->when($this->search, function($query) {
+            $query->where('title', 'like', '%' . $this->search . '%')
+            ->orWhere('description', 'like', '%' . $this->search . '%');
+        })->latest()->paginate(10, pageName: 'posts-page');
+    }
+
+    public function download(Post $post)
     {
-        return $table
-            ->query(Post::query())
-            ->columns([
-                TextColumn::make('title')
-                    ->weight('bold')
-                    ->sortable(),
-                TextColumn::make('description')
-            ])
-            ->headerActions([
-                // CreateAction::make()
-            ])
-            ->actions([
-                EditAction::make()
-                ->form([
-                TextInput::make('title'),
-                Textarea::make('description')
-                ]),
-                DeleteAction::make(),
-            ]);
+        return response()->download(
+            storage_path('app/'. $post->photo), 'photo.jpg'
+        );
+    }
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
     }
 }

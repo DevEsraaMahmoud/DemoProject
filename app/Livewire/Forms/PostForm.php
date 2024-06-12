@@ -5,33 +5,60 @@ namespace App\Livewire\Forms;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 use App\Models\Post;
+use Livewire\WithFileUploads;
 
 class PostForm extends Form
 {
-    #[Validate('required|min:5')]
+    use WithFileUploads;
+
+    public ?Post $post;
+
+    #[Validate('required', message: 'Please enter a title.')]
+    #[Validate('min:5', message: 'Your title is too short.')]
     public $title = '';
 
-    #[Validate('required|min:5')]
+    #[Validate('required', message: 'Please enter a description.')]
     public $description = '';
 
-    #[Validate('required|boolean')]
-    public $is_published = true;
-
-    // #[Validate('required|exists:categories,id')]
+    #[Validate('required', message: 'Please select a category.')]
     public $category_id = null;
 
-    // protected $listeners = ['optionSelected'];
+    public $is_published;
+    // #[Validate('image|max:1024')] // 1MB Max
+    public $photo;
 
-    // public function optionSelected($categoryId)
+    public function setPost(Post $post)
+    {
+        $this->post = $post;
+
+        $this->title = $post->title;
+
+        $this->description = $post->description;
+
+        $this->category_id = $post->category_id;
+
+        $this->is_published = $post->is_published;
+    }
+
+    // public function updated($property)
     // {
-    //     dd($categoryId);
-    //     // $this->form['category_id'] = $categoryId;
+    //     dd('here');
+
+    //     if ($property === 'title') {
+    //         $this->title = strtolower($this->title);
+    //     }
     // }
 
     public function store()
     {
-        $this->validate();
+        Post::create(array_merge($this->validate(), ['photo'=> $this->photo->store(path: 'photos')]));
+        $this->reset();
+    }
 
-        Post::create($this->all());
+    public function update()
+    {
+        $this->post->update(
+            $this->all()
+        );
     }
 }

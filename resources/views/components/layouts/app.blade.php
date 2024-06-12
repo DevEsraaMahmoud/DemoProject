@@ -17,10 +17,13 @@
 
         @filamentStyles
         @vite('resources/css/app.css')
+        @livewireStyles
+
     </head>
 
     <body class="antialiased">
         {{ $slot }}
+        @livewireScripts
 
         @livewire('notifications')
 

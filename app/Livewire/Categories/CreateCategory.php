@@ -14,6 +14,13 @@ class CreateCategory extends Component implements HasForms
 
     public CategoryForm $form;
 
+    public function updated($property)
+    {
+        if ($property === 'title') {
+            $this->title = strtolower($this->title);
+        }
+    }
+
     public function create()
     {
         $this->form->store();

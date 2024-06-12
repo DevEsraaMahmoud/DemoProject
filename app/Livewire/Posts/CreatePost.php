@@ -2,31 +2,67 @@
 
 namespace App\Livewire\Posts;
 
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use App\Livewire\Forms\PostForm;
-use App\Models\Category;
 use Livewire\Component;
+use App\Models\Category;
+use Livewire\Attributes\On;
+use Livewire\WithFileUploads;
+use App\Livewire\Forms\PostForm;
 use Illuminate\Contracts\View\View;
 
-class CreatePost extends Component implements HasForms
+class CreatePost extends Component
 {
-    use InteractsWithForms;
+    use WithFileUploads;
 
     public PostForm $form;
+
+    public $updateTypes = [];
+
+    public $receiveUpdates = '';
+
+    public $selectedPost = null;
+
+    public $selectedOption = null;
+
+    public $showCategories = false;
+
+
+    public function mount($selectedOption = null)
+    {
+        $this->selectedOption = $selectedOption;
+    }
+
+    public function updatedSelectedOption($value)
+    {
+        $this->dispatch('selectedOption', $value);
+    }
+
+    // public function rules()
+    // {
+    //     return [
+    //         'title' => [
+    //             'required',
+    //             // Rule::unique('posts')->ignore($this->post),
+    //         ],
+    //         'description' => 'required|min:5',
+    //     ];
+    // }
+
+    #[On('selectedOption')]
+    public function selectedOption($categoryId)
+    {
+        $this->form->category_id = $categoryId;
+    }
 
     public function create()
     {
         $this->form->store();
-
-        session()->flash('status', 'Post successfully updated.');
-
-        return $this->redirect('/posts');
+        return $this->redirectRoute('posts.index', navigate: true);
     }
 
     public function render(): View
     {
-        $categories = Category::all()->pluck('name', 'id')->toArray();
-        return view('livewire.posts.create-post', compact('categories'));
+        return view('livewire.posts.create-post')->with([
+            'categories' => Category::all()->pluck('name', 'id')->toArray()
+        ]);
     }
 }

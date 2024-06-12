@@ -1,10 +1,15 @@
 <?php
 
-use App\Livewire\Posts\CreatePost;
 use App\Livewire\Posts\ListPosts;
-use App\Livewire\Categories\ListCategories;
-use App\Livewire\Categories\CreateCategory;
+use App\Livewire\Posts\CreatePost;
+use App\Livewire\Posts\UpdatePost;
+use App\Livewire\CountDown;
+use App\Livewire\Chatbot;
 use Illuminate\Support\Facades\Route;
+use App\Livewire\Categories\CreateCategory;
+use App\Livewire\Categories\ListCategories;
+use App\Livewire\Dashboard\Dashboard;
+use App\Livewire\Posts\ShowPost;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,10 +27,18 @@ foreach (config('tenancy.central_domains') as $domain) {
             return view('welcome');
         });
 
-        Route::get('posts', ListPosts::class);
-        Route::get('posts/create', CreatePost::class)->name('create.posts');
+        Route::get('posts', ListPosts::class)->name('posts.index')->lazy(enabled: false);
+        Route::get('posts/create', CreatePost::class)->name('posts.create');
+        Route::get('posts/{post}/edit', UpdatePost::class)->name('posts.edit');
+        Route::get('posts/{post}/show', ShowPost::class)->name('posts.show');
+
+        Route::get('count-down', CountDown::class);
+        Route::get('chatbot', Chatbot::class);
 
         Route::get('categories', ListCategories::class);
         Route::get('categories/create', CreateCategory::class)->name('create.categories');
+
+
+        Route::get('dashboard', Dashboard::class)->name('dashboard.index');
     });
 }

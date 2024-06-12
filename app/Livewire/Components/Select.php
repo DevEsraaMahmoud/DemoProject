@@ -13,11 +13,12 @@ class Select extends Component
     {
         $this->options = $options;
         $this->selectedOption = $selectedOption;
+
     }
 
     public function updatedSelectedOption($value)
     {
-        $this->emit('optionSelected', $value);
+        $this->dispatch('selectedOption', $value);
     }
 
     public function render()
