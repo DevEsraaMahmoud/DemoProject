@@ -3,14 +3,14 @@
     <form wire:submit="create" class="bg-gray-100 shadow-md rounded-lg px-8 pt-6 pb-8 mb-4">
         <div class="mb-4">
             <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Title</label>
-            <input type="text" id="title" wire:model.blur="form.title" wire:dirty.class="border-yellow-500" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-            <div>@error('form.title') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror</div>
+            <input type="text" id="title" wire:model.blur="title" wire:dirty.class="border-yellow-500" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            <div>@error('title') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror</div>
         </div>
 
         <div class="mb-6">
             <label for="description" class="block text-gray-700 text-sm font-bold mb-2">Description</label>
-            <textarea id="description" wire:model.blur="form.description" rows="5" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
-            <div>@error('form.description') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror</div>
+            <textarea id="description" wire:model.blur="description" rows="5" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+            <div>@error('description') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror</div>
         </div>
 
         <div class="mb-6">
@@ -22,9 +22,9 @@
             x-on:livewire-upload-error="uploading = false"
             x-on:livewire-upload-progress="progress = $event.detail.progress">
             <!-- File Input -->
-            <input type="file" wire:model="form.photo">
+            <input type="file" wire:model="photo">
 
-            <div>@error('form.photo') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror</div>
+            <div>@error('photo') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror</div>
 
             <!-- Progress Bar -->
             <div x-show="uploading">
@@ -34,14 +34,14 @@
         </div>
 
         <div class="mb-6">
-            <livewire:components.select :options="$categories" wire:model="form.category_id" />
-                <div>@error('form.category_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror</div>
+            <livewire:components.select :options="$categories" wire:model="category_id" />
+                <div>@error('category_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror</div>
         </div>
 
 
 
         <div class="mb-4">
-            <input type="checkbox" wire:model="form.is_published" /> Published
+            <input type="checkbox" wire:model="is_published" /> Published
         </div>
 
         <div class="mb-4">

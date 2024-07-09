@@ -7,7 +7,6 @@ use Livewire\Component;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Livewire\Attributes\Lazy;
-use Livewire\Attributes\Title;
 use Livewire\Attributes\Computed;
 
 #[Lazy]
@@ -49,4 +48,5 @@ class ListPosts extends Component
     {
         $this->resetPage();
     }
+
 }

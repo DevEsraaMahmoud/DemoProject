@@ -4,25 +4,39 @@ namespace App\Livewire\Posts;
 
 use App\Models\Post;
 use Livewire\Component;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Attributes\On;
-use Livewire\Attributes\Locked;
+use Illuminate\Contracts\View\View;
 
 class ShowPost extends Component
 {
-    // #[Locked]
-    public Post $post;
+    use AuthorizesRequests;
 
-    #[On('post-deleted')]
-    public function delete(Post $post){
-        $post->delete();
-        session()->flash('message', 'Post deleted successfully.');
-        return $this->redirectRoute('posts.index', navigate: true);
+    public Post $post;
+    public $title;
+    public $description;
+
+    public function mount(Post $post): void
+    {
+        $this->authorize('view', $post); // Authorization check
+        $this->post = $post;
+        $this->title = $post->title;
+        $this->description = $post->description;
     }
 
-    public function exception($e, $stopPropagation) {
-        dd('here');
-        if($e instanceof NotFoundException) {
-            $this->notify('Post is not found');
-        }
+    #[On('post-deleted')]
+    public function delete()
+    {
+        $this->authorize('delete', $this->post);
+        $this->post->delete();
+        session()->flash('message', 'Post deleted successfully.');
+        return $this->redirectRoute('posts.index');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.posts.show-post', [
+            'post' => $this->post
+        ]);
     }
 }

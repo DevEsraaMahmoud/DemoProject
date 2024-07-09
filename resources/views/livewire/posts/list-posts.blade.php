@@ -1,4 +1,3 @@
-use App\Livewire\CountDown;
 <div class="wrapper w-full md:max-w-5xl mx-auto pt-20 px-4">
     <p class="alert alert-warning bg-red-500 text-white" wire:offline>
         Whoops, your device has lost connection. The web page you are viewing is offline.

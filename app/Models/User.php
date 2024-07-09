@@ -20,6 +20,8 @@ class User extends Authenticatable implements FilamentUser, HasTenants
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    protected $connection = 'sso-test';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -73,5 +75,9 @@ class User extends Authenticatable implements FilamentUser, HasTenants
 
     public function todos(): HasMany{
         return $this->hasMany(Todo::class);
+    }
+
+    public function posts(): HasMany{
+        return $this->hasMany(Post::class);
     }
 }

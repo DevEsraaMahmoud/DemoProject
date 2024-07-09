@@ -5,13 +5,15 @@ namespace Tests\Feature\Livewire;
 use Tests\TestCase;
 use App\Models\Post;
 use Livewire\Livewire;
-use App\Livewire\Forms\PostForm;
+use App\Models\Category;
 use App\Livewire\Posts\CreatePost;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class CreatePostTest extends TestCase
 {
+    use RefreshDatabase;
+
     /** @test */
     public function test_it_renders_successfully()
     {
@@ -19,41 +21,89 @@ class CreatePostTest extends TestCase
             ->assertStatus(200);
     }
 
+    /** @test */
+    public function test_it_pass_categories_to_view(){
+        // Create a category and multiple posts
+        Category::factory()->create();
+        Post::factory()->create();
+
+        Livewire::test(CreatePost::class)
+        ->assertViewHas('categories');
+    }
+
+    /** @test */
+    public function test_can_set_title()
+    {
+        Livewire::test(CreatePost::class)
+            ->set('title', 'Confessions of a serial soaker')
+            ->assertSet('title', 'Confessions of a serial soaker');
+    }
+
     public function test_it_can_create_post()
     {
-        $this->assertEquals(0, Post::count());
+        $photo = TemporaryUploadedFile::fake()->image('photo.jpg');
+        $category = Category::factory()->create();
 
-        Livewire::test(PostForm::class)
-            ->set('title', 'Wrinkly fingers? Try this one weird trick')
+        Livewire::test(CreatePost::class)
+            ->set('title', 'test name')
             ->set('description', '...')
-            ->call('create');
+            ->set('category_id', $category->id)
+            ->set('photo', $photo)
+            ->call('create')
+            ->assertHasNoErrors(['title', 'description','category_id', 'photo']);
 
         $this->assertEquals(1, Post::count());
     }
 
     public function test_title_field_is_required()
     {
-        Livewire::test(PostForm::class)
+        Livewire::test(CreatePost::class)
             ->set('title', '')
             ->call('create')
             ->assertHasErrors('title');
     }
 
-    public function redirected_to_all_posts_after_creating_a_post()
+    public function test_redirected_to_all_posts_after_creating_a_post()
     {
-        Livewire::test(PostForm::class)
-            ->set('title', 'Using a loofah doesn\'t make you aloof...ugh')
+        $category = Category::factory()->create();
+        $photo = TemporaryUploadedFile::fake()->image('photo.jpg');
+
+        Livewire::test(CreatePost::class)
+            ->set('title', 'test name')
             ->set('description', '...')
+            ->set('category_id', $category->id)
+            ->set('photo', $photo)
             ->call('create')
+            ->assertHasNoErrors(['title', 'description','category_id', 'photo'])
             ->assertRedirect('/posts');
     }
 
-    public function creating_a_post_dispatches_event()
+    /** @test */
+    public function test_it_updates_category_id_when_selected_option_is_triggered()
     {
-        Livewire::test(CreatePost::class)
-            ->set('title', 'Top 100 bubble bath brands')
-            ->set('content', '...')
-            ->call('save')
-            ->assertDispatched('post-created');
+        $category = Category::factory()->create();
+        $post = Post::factory()->create();
+
+        Livewire::test('posts.create-post', ['post' => $post])
+            ->dispatch('selectedOption', $category->id)
+            ->assertSet('category_id', $category->id);
+    }
+
+    /** @test */
+    public function test_it_validates_photo_upload()
+    {
+        Livewire::test('posts.create-post')
+            ->set('photo', \Illuminate\Http\UploadedFile::fake()->create('document.pdf'))
+            ->call('create')
+            ->assertHasErrors(['photo']);
+    }
+
+    /** @test */
+    public function test_it_upload_photo()
+    {
+        Livewire::test('posts.create-post')
+            ->set('photo', \Illuminate\Http\UploadedFile::fake()->create('image.png'))
+            ->call('create')
+            ->assertHasNoErrors(['photo']);
     }
 }

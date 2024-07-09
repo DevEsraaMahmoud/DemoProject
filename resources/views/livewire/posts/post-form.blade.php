@@ -1,0 +1,1 @@
+@livewire('forms.post-form')

@@ -21,8 +21,7 @@ use App\Livewire\Posts\ShowPost;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-foreach (config('tenancy.central_domains') as $domain) {
-    Route::domain($domain)->group(function () {
+    // Route::group(function () {
         Route::get('/', function () {
             return view('welcome');
         });
@@ -30,7 +29,7 @@ foreach (config('tenancy.central_domains') as $domain) {
         Route::get('posts', ListPosts::class)->name('posts.index')->lazy(enabled: false);
         Route::get('posts/create', CreatePost::class)->name('posts.create');
         Route::get('posts/{post}/edit', UpdatePost::class)->name('posts.edit');
-        Route::get('posts/{post}/show', ShowPost::class)->name('posts.show');
+        Route::get('posts/{post}/show', ShowPost::class)->name('posts.show')->middleware('auth');
 
         Route::get('count-down', CountDown::class);
         Route::get('chatbot', Chatbot::class);
@@ -40,5 +39,8 @@ foreach (config('tenancy.central_domains') as $domain) {
 
 
         Route::get('dashboard', Dashboard::class)->name('dashboard.index');
-    });
-}
+    // });
+
+    Route::get('/login', function ()  {
+        return redirect()->away('http://sso.com/login');
+    })->name('login');

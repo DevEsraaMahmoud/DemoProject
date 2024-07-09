@@ -2,10 +2,8 @@
     <div class="container mx-auto">
         <div class="bg-white shadow-md rounded-lg p-6">
             <!-- Post Title -->
-            <section>
-                <h1 class="text-2xl font-semibold text-gray-800 mb-2">Post Title</h1>
-                <h2 class="text-4xl font-semibold text-gray-800 mb-4">{{ $post->title }}</h2>
-                <p class="text-gray-600 mb-6">{{ $post->created_at->format('M d, Y') }} by {{ $post->author->name ?? 'Unknown' }}</p>
+            <section class="mb-6">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-2">{{ $post->title }}</h2>
             </section>
 
             <!-- Post Description -->
@@ -30,8 +28,9 @@
                     Back to Posts
                 </a>
 
-                <button type="submit" wire:click="delete({{ $post->id }})"  wire:confirm="Are you sure you want to delete this post?" class="inline-block bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline">Delete Post</button>
-
+                <button type="button" wire:click="delete" class="inline-block bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline">
+                    Delete Post
+                </button>
             </section>
         </div>
     </div>

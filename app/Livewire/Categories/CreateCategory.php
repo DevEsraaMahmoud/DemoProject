@@ -2,30 +2,35 @@
 
 namespace App\Livewire\Categories;
 
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use App\Livewire\Forms\CategoryForm;
 use Livewire\Component;
+use App\Models\Category;
+use Livewire\Attributes\Validate;
 use Illuminate\Contracts\View\View;
+use Filament\Forms\Concerns\InteractsWithForms;
 
-class CreateCategory extends Component implements HasForms
+class CreateCategory extends Component
 {
     use InteractsWithForms;
 
-    public CategoryForm $form;
+    #[Validate('required|min:5')]
+    public $name = '';
+
+    #[Validate('required|min:5')]
+    public $slug = '';
+
 
     public function updated($property)
     {
-        if ($property === 'title') {
-            $this->title = strtolower($this->title);
+        if ($property === 'name') {
+            $this->name = strtolower($this->name);
         }
     }
 
     public function create()
     {
-        $this->form->store();
+        $this->validate();
 
-        session()->flash('status', 'Category successfully updated.');
+        Category::create($this->all());
 
         return $this->redirect('/categories');
     }

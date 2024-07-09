@@ -61,4 +61,9 @@ class PostForm extends Form
             $this->all()
         );
     }
+
+    public function render()
+    {
+        return view('livewire.forms.post-form');
+    }
 }
