@@ -37,6 +37,8 @@ use App\Livewire\Posts\ShowPost;
         Route::get('categories', ListCategories::class);
         Route::get('categories/create', CreateCategory::class)->name('create.categories');
 
+        Route::get('categories', ListCategories::class)->name('categories.index');
+        Route::get('categories/create', CreateCategory::class)->name('categories.create');
 
         Route::get('dashboard', Dashboard::class)->name('dashboard.index');
     // });

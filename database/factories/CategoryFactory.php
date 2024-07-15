@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Category;
+use App\Models\SubCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -15,6 +16,19 @@ class CategoryFactory extends Factory
      *
      * @return array<string, mixed>
      */
+
+    /**
+     * Configure the model factory.
+     */
+    public function configure(): static
+    {
+        return $this->afterCreating(function (Category $category) {
+            SubCategory::factory()->create([
+                'category_id' => $category
+            ]);
+        });
+    }
+
     public function definition(): array
     {
         return [
